@@ -57,15 +57,15 @@ export class FireRate extends Upgradeable {
   }
 
   upgrade(user) {
-    if (user.verifyTransaction(this._upgradeCost)) {
-      console.log('In upgrade current level is ' + this.currentLevel + ' and maxLevel is ' + this.maxLevel);
-      if (this.currentLevel < this.maxLevel) {
-        console.log('upgrading player fire rate');
+    if (this.currentLevel < this.maxLevel) {
+      if (user.verifyTransaction(this._upgradeCost)) {
+        //console.log('In upgrade current level is ' + this.currentLevel + ' and maxLevel is ' + this.maxLevel);
+        //console.log('upgrading player fire rate');
         this.currentLevel++;
         this._fireRate = this.upgradeLevelRate[this.currentLevel];
-      } else {
-        console.log('Max upgrade already achieved');
       }
+    } else {
+      console.log('Max upgrade already achieved');
     }
   }
 
@@ -97,13 +97,13 @@ export class MaxBoost extends Upgradeable {
   }
 
   upgrade(user) {
-    if (user.verifyTransaction(this._upgradeCost)) {
-      if (this.currentLevel < this.maxLevel) {
+    if (this.currentLevel < this.maxLevel) {
+      if (user.verifyTransaction(this._upgradeCost)) {
         this.currentLevel++;
         this._maxBoost = this.upgradeLevelRate[this.currentLevel];
-      } else {
-        console.log('Max upgrade already achieved');
       }
+    } else {
+      console.log('Max upgrade already achieved');
     }
   }
 
@@ -119,5 +119,41 @@ export class MaxBoost extends Upgradeable {
   reset() {
     this.currentLevel = 0;
     this._maxBoost = this.upgradeLevelRate[this.currentLevel];
+  }
+}
+
+export class TurnRate extends Upgradeable {
+  constructor(maxLvl, cost, upgradeRates, name) {
+    super(maxLvl, cost, upgradeRates, name);
+    this._turnRate = upgradeRates[0];
+  }
+
+  get turnRate() {
+    return this._turnRate;
+  }
+
+  upgrade(user) {
+    if (this.currentLevel < this.maxLevel) {
+      if (user.verifyTransaction(this._upgradeCost)) {
+        this.currentLevel++;
+        this._turnRate = this.upgradeLevelRate[this.currentLevel];
+      }
+    } else {
+      console.log('Max upgrade already achieved');
+    }
+  }
+
+  downgrade() {
+    if (this.currentLevel != 0) {
+      this.currentLevel--;
+      this._turnRate = this.upgradeLevelRate[this.currentLevel];
+    } else {
+      console.log('Error, cannot downgrade past level 0;');
+    }
+  }
+
+  reset() {
+    this.currentLevel = 0;
+    this._turnRate = this.upgradeLevelRate[this.currentLevel];
   }
 }

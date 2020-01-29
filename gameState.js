@@ -57,19 +57,19 @@ export default class GameState {
 
   initScreens() {
     try {
-      console.log('initializing screens');
+      //console.log('initializing screens');
       this.gameScreen = new GameScreen(this._context, 'Game');
       this.startScreen = new Screen(this._context, 'Start');
       this.gameOverScreen = new Screen(this._context, 'Game Over');
       this.winScreen = new Screen(this._context, 'Win');
       this.pauseScreen = new Screen(this._context, 'Pause');
       this.upgradeScreen = new UpgradeScreen(this._context, 'Upgrade');
-      console.dir(this.upgradeScreen);
+      //console.dir(this.upgradeScreen);
     } catch {
       if (this._context === null) {
-        console.log('context has not been defined');
+        //console.log('context has not been defined');
       } else {
-        console.log('Error initializing sceens: unknown error');
+        //console.log('Error initializing sceens: unknown error');
       }
     }
   }
@@ -78,7 +78,7 @@ export default class GameState {
   //
 
   start() {
-    console.log('starting animation');
+    //console.log('starting animation');
     this.game.reset(this._context);
     this.started = true;
     this.stopped = false;
@@ -105,7 +105,7 @@ export default class GameState {
   //Gameplay States
   pause() {
     if (this.currentScreen === this.pauseScreen) {
-      console.log('unpausing game');
+      //console.log('unpausing game');
       this.currentScreen = this.gameScreen;
       this.first = true;
       let _this = this;
@@ -114,7 +114,7 @@ export default class GameState {
       });
       return;
     } else if (this.currentScreen === this.gameScreen) {
-      console.log('pausing game');
+      //console.log('pausing game');
       this.currentScreen = this.pauseScreen;
       let txt = 'PAUSE';
       let txtWidth = this._context.measureText(txt).width;
@@ -213,8 +213,8 @@ export default class GameState {
   upgrade() {
     this.currentScreen = this.upgradeScreen;
     this.addGold();
-    console.log('upgrade screen images:');
-    console.dir(this.upgradeScreen.upgradeImages);
+    //console.log('upgrade screen images:');
+    //console.dir(this.upgradeScreen.upgradeImages);
     this.upgradeScreen.drawUpgradeImages(3, 100, 20, true, 'purple');
     for (let i = 0; i < this.upgradeScreen.upgradeImages.length; i++) {
       let j = 0;
@@ -223,11 +223,11 @@ export default class GameState {
       let padding = 0;
       let offset = 0;
       let dim = this.upgradeScreen.upgradeDimensions(`${this.upgradeScreen.upgradeImages[i].name}`);
-      console.dir(dim);
-      console.log(
-        `${this.upgradeScreen.upgradeImages[i].name} currentLvl is ` +
-          this.game.player.upgradeables[i].currentLvl
-      );
+      //console.dir(dim);
+      //console.log(
+      //  `${this.upgradeScreen.upgradeImages[i].name} currentLvl is ` +
+      //    this.game.player.upgradeables[i].currentLvl
+      //);
       while (j < this.game.player.upgradeables[i].currentLevel) {
         padding = j * 4;
         offset = (4 * this.game.player.upgradeables[i].maxLevel) / 2;
@@ -238,13 +238,13 @@ export default class GameState {
           rectWidth,
           rectHeight
         );
-        console.dir(this.upgradeScreen);
+        //console.dir(this.upgradeScreen);
         j++;
       }
-      console.dir(this.game.player.upgradeables[i]);
-      console.log(
-        `${this.upgradeScreen.upgradeImages[i].name} maxLevel is ` + this.game.player.upgradeables[i].maxLevel
-      );
+      //console.dir(this.game.player.upgradeables[i]);
+      //console.log(
+      //  `${this.upgradeScreen.upgradeImages[i].name} maxLevel is ` + this.game.player.upgradeables[i].maxLevel
+      //);
       while (j < this.game.player.upgradeables[i].maxLevel) {
         padding = j * 4;
         offset = (4 * this.game.player.upgradeables[i].maxLevel) / 2;

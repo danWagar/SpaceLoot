@@ -115,6 +115,16 @@ window.onload = function() {
   };
   boostUpgradeImage.src = '../images/boostUpgradeImage.png';
 
+  let turnUpgradeImage = new Image();
+  turnUpgradeImage.onload = function() {
+    console.log('turnUpgradeImage loaded');
+    //gameState.upgradeScreen.upgradeImages.push(boostUpgradeImage);
+
+    gameState.upgradeScreen.addUpgradeImage(turnUpgradeImage, 'turnRate');
+    //gameState.upgradeScreen.addImage(boostUpgradeImage, center + boostUpgradeImage.width/2, canv.height/4, true, "purple", "boost");
+  };
+  turnUpgradeImage.src = '../images/turnUpgradeImage.png';
+
   //load plus button
   let plusButton = new Image();
   plusButton.onload = function() {
@@ -172,34 +182,34 @@ window.addEventListener(
   function(e) {
     let buttonClicked = gameState.currentScreen.checkButtonClick(e);
     if (buttonClicked !== false) {
-      console.log('buttonClicked is ' + buttonClicked);
+      //console.log('buttonClicked is ' + buttonClicked);
       if (buttonClicked === 'start') {
-        console.log('you clicked on start');
+        //console.log('you clicked on start');
         gameState.start();
       } else if (buttonClicked === 'home') {
-        console.log('you clicked on home');
+        //console.log('you clicked on home');
         gameState.home();
       } else if (buttonClicked === 'next') {
-        console.log('you clicked on next');
+        //console.log('you clicked on next');
         if (gameState.currentScreen.name === 'Win') {
           gameState.upgrade();
         } else {
           gameState.start();
         }
       } else if (buttonClicked.slice(0, 4) === 'plus') {
-        console.log('An upgrade button was clicked');
+        //console.log('An upgrade button was clicked');
         let name = buttonClicked.slice(4);
-        console.log('searching for ' + name);
+        //console.log('searching for ' + name);
         for (let i = 0; i < game.player.upgradeables.length; i++) {
-          console.dir(game.player.upgradeables[i]);
+          //console.dir(game.player.upgradeables[i]);
           if (game.player.upgradeables[i].name === name) {
-            console.dir(game.user);
+            //console.dir(game.user);
             game.player.upgradeables[i].upgrade(game.user);
 
-            console.log(game.player.upgradeables[i].currentLevel);
+            //console.log(game.player.upgradeables[i].currentLevel);
             gameState.upgrade();
 
-            console.dir(game.player.fireRate);
+            //console.dir(game.player.fireRate);
           }
         }
       } else if (buttonClicked.slice(0, 5) === 'minus') {
@@ -208,7 +218,7 @@ window.addEventListener(
           if (game.player.upgradeables[i].name === name) {
             game.player.upgradeables[i].downgrade();
             gameState.upgrade();
-            console.dir(game.player.fireRate);
+            //console.dir(game.player.fireRate);
           }
         }
       }

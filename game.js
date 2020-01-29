@@ -15,6 +15,7 @@ export default class Game {
     this.maxCoins = 4;
     this.difficulty = 2;
     this.score = 0;
+    this.lvlScore = 0;
     this._level = 0;
     this.lvlScoreCap = 1500;
     this.lvlWon = false;
@@ -87,7 +88,7 @@ export default class Game {
   }
 
   initSprites(canv) {
-    console.log('initializing sprites');
+    //console.log('initializing sprites');
     let center = canv.width / 2;
     let playerWidth = 35,
       playerHeight = 42;
@@ -109,14 +110,17 @@ export default class Game {
     let canvHeight = ctx.canvas.clientHeight;
     let center = ctx.canvas.clientWidth / 2;
 
-    this.score = 1400;
     this.difficulty = this._level * 0.1 + 2;
 
     if (this._level !== 0) {
       this.lvlScoreCap += this._level * 200;
+      this.score += this.lvlScore;
+      this.lvlScore = 0;
     } else {
+      this.score = 0;
+      this.lvlScore = 0;
       this.lvlScoreCap = 1500;
-      this._user.gold = 1000;
+      this._user.gold = 0;
     }
 
     this._player.xPos = center;
@@ -186,12 +190,10 @@ export default class Game {
           );
           break;
         default:
-          console.log('Error: Non integer number passed for numEnemies in game.getEnemies');
+          console.log('Error: Invalid number passed for numEnemies in game.getEnemies');
           break;
       }
     }
-    console.log('updated enemy array');
-    console.dir(this.enemyArr);
   }
 
   getCoins(numCoins, canv) {
@@ -239,16 +241,16 @@ export default class Game {
   }
 
   detectCollision(primary, secondary, padding) {
-    if (
+    return (
       secondary.x + secondary.width >= primary.x + padding &&
       secondary.x + padding <= primary.x + primary.width &&
       secondary.y + secondary.height >= primary.y + padding &&
       secondary.y + padding <= primary.y + primary.width
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    );
+  }
+
+  outOfBounds(enemy, canv) {
+    return enemy.x <= 0 || enemy.y <= 0 || enemy.x >= canv.width || enemy.y >= canv.height;
   }
 
   update(delta, canv, state) {
@@ -273,9 +275,16 @@ export default class Game {
     }
     if (this.FIRE === true) {
       if (this._bulletCounter % this.player.fireRate.fireRate == 0) {
-        this.fireBullet();
+        if (this.player.cannonTemp > 0) {
+          console.log('TCL: Game -> update -> this.player.cannonTemp', this.player.cannonTemp);
+          this.fireBullet();
+          this.player.cannonTemp--;
+        } else if (this.player.cannonTemp !== 0) this.player.cannonTemp = -25;
+        else this.player.cannonTemp += this.player.cannonCooldownRate;
       }
       this._bulletCounter++;
+    } else if (this.player.cannonTemp != this.player.maxCannonTemp) {
+      this.player.cannonTemp += this.player.cannonCooldownRate;
     }
 
     /*Update state for sprites*/
@@ -298,26 +307,29 @@ export default class Game {
       this.getEnemies(1, canv);
     }
 
-    //Calculate direction and components of enemy velocity vector
     for (let i = 0; i < this.enemyArr.length; i++) {
+      //Calculate direction and components of enemy velocity vector
       let playerCenterX = this._player.x + this._player.width / 2;
       let playerCenterY = this._player.y + this._player.height / 2;
       this.enemyArr[i].updateVelocity(playerCenterX, playerCenterY, this.difficulty);
-    }
 
-    //Ensure enemy remains in boundaries of gamespace
-    for (let i = 0; i < this.enemyArr.length; i++) {
-      this.checkBoundaries(this.enemyArr[i], canv);
-    }
+      //Ensure enemy remains in boundaries of gamespace
+      //this.checkBoundaries(this.enemyArr[i], canv);
 
-    //enemy player collision detection
-    for (let i = 0; i < this.enemyArr.length; i++) {
+      //enemy player collision detection
       if (this.detectCollision(this._player, this.enemyArr[i], 0)) {
         this._level = 0;
         this._player.fireRate.reset();
+        this._player.maxBoost.reset();
+        this._player.turnRate.reset();
         state.gameOver();
       }
+
+      //get markers for out of bound enemies
+      if (this.outOfBounds(this.enemyArr[i], canv)) this.enemyArr[i].marker = true;
+      else this.enemyArr[i].marker = false;
     }
+
     //////////////
     //Bullets   //
     //////////////
@@ -328,8 +340,8 @@ export default class Game {
     }
 
     //prevent bulletArr from becoming too large
-    if (this.bulletArr.length > 30) {
-      this.bulletArr.splice(29, this.bulletArr.length - 29);
+    if (this.bulletArr.length > 50) {
+      this.bulletArr.splice(49, this.bulletArr.length - 49);
     }
 
     //enemy bullet collision detection
@@ -357,16 +369,17 @@ export default class Game {
       if (this.detectCollision(this._player, coin, 0)) {
         this.coinArr.splice(i, 1);
         this.coinsCurrent--;
+        this.lvlScore += 100;
         this.score += 100;
         this._user.gold += 100;
-        console.dir(this._user);
-        this.difficulty += this.score / 100000;
+        //console.dir(this._user);
+        this.difficulty += this.lvlScore / 100000;
       }
     }
 
     /*Check for win condition*/
-    if (this.score >= this.lvlScoreCap) {
-      state.win(this.score);
+    if (this.lvlScore >= this.lvlScoreCap) {
+      state.win(this.lvlScore);
       this._level++;
     }
   }
