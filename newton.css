@@ -1,29 +1,30 @@
-#background{
-    background-color: black;
-    padding: 0px;
-    margin: 0px;
+#background {
+  background-color: black;
+  padding: 0px;
+  margin: 0px;
 }
 
-#container{
-    width: 50%;
-    height: 100%;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: red;
+#container {
+  position: relative;
+  width: 50%;
+  height: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: rgb(227, 36, 68);
 }
 
-#header{
-    width: 85%;
-    height: 100%;
-    margin-left: 0px;
-    margin-right: 0px;
-    margin-top: -10px;
-    margin-bottom: 10px;
-    padding: 0px;
-    font-size: 35px;
-    font-family: 'Audiowide', cursive;
-    text-align: left;
-    background-color: red;
+#header {
+  width: 65%;
+  height: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: -10px;
+  margin-bottom: 10px;
+  padding: 0px;
+  font-size: 35px;
+  font-family: 'Audiowide', cursive;
+  text-align: left;
+  background-color: rgb(227, 36, 68);
 }
 
 a:link {
@@ -46,27 +47,32 @@ a:active {
   color: black;
 }
 
-#first{
-    width: 20%;
-    text-align: left; 
-    padding-left: 5px;
-    padding-right: 40px;
-    margin-right: 15px;
-    margin-top: -10px;
-    font-size: 30px;
-    font-family: 'Fjalla One', sans-serif;
-    background-color: cyan;  
+#first {
+  position: absolute;
+  left: 0;
+  width: 80px;
+  text-align: left;
+  padding-left: 5px;
+  padding-right: 20px;
+  margin-right: 15px;
+  margin-top: 30px;
+  font-size: 30px;
+  font-family: 'Fjalla One', sans-serif;
+  background-color: cyan;
 }
 
-#last{
-    width: 60%;
-    text-align: center;
-    padding-left: 20px;
+#last {
+  width: 60%;
+  text-align: center;
+  padding-left: 20px;
 }
 
-#screen{
-    width: 85%;
-    margin-left: auto;
-    margin-right: auto;
-    padding-bottom: 100px;
+#screen {
+  width: 620px;
+  margin: 0 auto;
+  padding-bottom: 100px;
+}
+
+.gameScreen {
+  border: 8px solid rgb(111, 111, 111);
 }

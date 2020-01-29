@@ -1,4 +1,4 @@
-import { FireRate, MaxBoost } from './upgrade.js';
+import { FireRate, MaxBoost, TurnRate } from './upgrade.js';
 
 class Sprite {
   constructor(x, y, width, height) {
@@ -26,6 +26,7 @@ export class Enemy extends Sprite {
     super(x, y, width, height);
     this.velocity = [0, 0];
     this.velocityFactor = Math.max(Math.random() * (1 - 0.5)) + 0.5;
+    this.marker = false;
   }
 
   //applies velocity to enemy position directly toward player.
@@ -45,6 +46,21 @@ export class Enemy extends Sprite {
   draw(ctx) {
     ctx.fillStyle = 'white';
     ctx.fillRect(this.x, this.y, this.width, this.height);
+    if (this.marker === true) {
+      //console.log('drawing marker');
+      ctx.fillStyle = 'red';
+      let x;
+      let y;
+      let width = 5;
+      let height = 5;
+      if (this.x <= 0) x = 0;
+      else if (this.x >= ctx.canvas.width) x = ctx.canvas.width - width;
+      else x = this.x;
+      if (this.y <= 0) y = 0;
+      else if (this.y >= ctx.canvas.height) y = ctx.canvas.height - height;
+      else y = this.y;
+      ctx.fillRect(x, y, width, height);
+    }
   }
 }
 
@@ -56,15 +72,20 @@ export class Player extends Sprite {
     this.mass = 10;
     this.force = 1.5;
     this.acceleration = 0;
+    this.speed;
     this.resistance = 0.015;
-    this.angleChangeRate = 4;
-    this._fireRate = new FireRate(5, 500, [40, 30, 20, 10, 5, 2], 'fireRate');
+    this._fireRate = new FireRate(5, 500, [30, 20, 10, 5, 2, 1], 'fireRate');
     this._maxBoost = new MaxBoost(5, 500, [100, 125, 150, 175, 200, 250], 'maxBoost');
-    this.upgradeables = [this._fireRate, this._maxBoost];
-    (this.bulletArr = []), (this._boost = 100);
+    this._turnRate = new TurnRate(5, 500, [3.5, 4, 4.5, 5, 5.5, 6], 'turnRate');
+    this.upgradeables = [this._fireRate, this._maxBoost, this._turnRate];
+    this.bulletArr = [];
+    this._boost = 100;
     this.boostConsumptionRate = 2;
     this.boostRefillRate = 2;
     this.noBoost = false;
+    this._cannonTemp = 50;
+    this._maxCannonTemp = 50;
+    this.cannonCooldownRate = 0.5;
     this.image = new Image();
   }
 
@@ -84,11 +105,26 @@ export class Player extends Sprite {
     return this._maxBoost;
   }
 
+  get turnRate() {
+    return this._turnRate;
+  }
+
   set boost(val) {
     this._boost = val;
   }
   get boost() {
     return this._boost;
+  }
+
+  get cannonTemp() {
+    return this._cannonTemp;
+  }
+  set cannonTemp(val) {
+    this._cannonTemp = val;
+  }
+
+  get maxCannonTemp() {
+    return this._maxCannonTemp;
   }
 
   updateVelocity() {
@@ -135,16 +171,16 @@ export class Player extends Sprite {
         this._boost = this._maxBoost.maxBoost;
       }
     } else {
-      console.log('Error, passed value is not boolean in Player.accelerate()');
+      //console.log('Error, passed value is not boolean in Player.accelerate()');
     }
   }
 
   left() {
-    this.angle -= this.angleChangeRate;
+    this.angle -= this._turnRate.turnRate;
   }
 
   right() {
-    this.angle += this.angleChangeRate;
+    this.angle += this._turnRate.turnRate;
   }
 
   draw(ctx) {
@@ -190,7 +226,7 @@ export class Bullet extends Sprite {
     super(x, y, width, height);
     this.image = img;
     this.angle = angle;
-    this.bulletSpeed = 2;
+    this.bulletSpeed = 3;
     this.velocity = [0, 0];
     this.x += Math.sin((this.angle * Math.PI) / 180) * 20;
     this.y -= Math.cos((this.angle * Math.PI) / 180) * 20;
@@ -200,6 +236,7 @@ export class Bullet extends Sprite {
     let degToRad = Math.PI / 180;
     this.velocity[0] = Math.sin(this.angle * degToRad) * this.bulletSpeed;
     this.velocity[1] = Math.cos(this.angle * degToRad) * this.bulletSpeed;
+
     this.x += this.velocity[0];
     this.y -= this.velocity[1];
   }
